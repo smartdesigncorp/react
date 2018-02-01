@@ -12,7 +12,9 @@
     "react-router-dom": "^4.2.2"
   },
   "scripts": {
-    "start": "babel-node src/server"
+    "start": "babel-node src/server",
+    "production": "SET NODE_ENV=production && SET BABEL_ENV=production && npm run build && npm start",
+    "build": "SET NODE_ENV=production && webpack --config webpack.config.babel.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -28,8 +30,9 @@
     "open": "0.0.5",
     "style-loader": "^0.19.1",
     "url-loader": "^0.6.2",
-    "webpack": "^3.10.0",
+    "webpack": "^2.6.1",
     "webpack-dev-middleware": "^2.0.4",
-    "webpack-hot-middleware": "^2.21.0"
+    "webpack-hot-middleware": "^2.21.0",
+    "webpack-split-chunks": "^0.2.1"
   }
 }
