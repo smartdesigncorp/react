@@ -5,12 +5,19 @@ import path from 'path';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import open from 'open';
+import exphbs from 'express-handlebars';
 
 //Configuracion de webpack
 import webpackConfig from '../../webpack.config.babel';
 
 // API
 import blogApi from './api/blog';
+
+//Helpers
+import * as hbsHelper from '../lib/handlebars';
+
+//Utils
+import {isMobile} from '../lib/utils/device';
 
 //Puerto del servidor
 const port = 3000;
@@ -24,6 +31,16 @@ const app = express();
 //Public
 app.use(express.static(path.join(__dirname,'../public')));
 
+//handlebars setup
+app.engine('.hbs',exphbs({
+  extname:'.hbs',
+  helpers:hbsHelper
+}));
+
+//View Engine Setup
+app.set('views',path.join(__dirname,'./views'));
+app.set('view engine', '.hbs');
+
 //Webpack Compiler
 const webpackCompiler = webpack(webpackConfig);
 
@@ -33,12 +50,20 @@ if(isDevelopment){
   app.use(webpackHotMiddleware(webpackCompiler));
 }
 
+//Device detector
+app.use((req,res,next) => {
+  res.locals.isMobile = isMobile(req.headers['user-agent']);
+  return next();
+})
+
 // API dispatch
 app.use('/api/blog', blogApi);
 
 //Se envia toso el trafico de React
 app.get('*',(req,res) =>{
-  res.sendFile(path.join(__dirname,'../public/index.html'));
+  res.render('frontend/index',{
+    layout:false
+  });
 });
 
 //Puerto que escucha
