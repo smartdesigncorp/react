@@ -1,2 +1,7 @@
 # Ficheros generados por webpack
 /node_modules/
+
+#Public
+/src/public/main.boundle.js
+/src/public/vendor.boundle.js
+/src/public/manifest.json
