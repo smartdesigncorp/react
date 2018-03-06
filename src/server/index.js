@@ -7,20 +7,21 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import open from 'open';
 import exphbs from 'express-handlebars';
 
+//Config
+import config from '../config';
+
 //Configuracion de webpack
 import webpackConfig from '../../webpack.config.babel';
 
 // API
 import blogApi from './api/blog';
+import libraryApi from './api/library';
 
 //Helpers
 import * as hbsHelper from '../lib/handlebars';
 
 //Utils
 import {isMobile} from '../lib/utils/device';
-
-//Puerto del servidor
-const port = 3000;
 
 //Environment
 const isDevelopment = process.env.NODE_ENV !== 'produccion';
@@ -32,13 +33,13 @@ const app = express();
 app.use(express.static(path.join(__dirname,'../public')));
 
 //handlebars setup
-app.engine('.hbs',exphbs({
-  extname:'.hbs',
+app.engine(config.views.engine,exphbs({
+  extname:config.views.extension,
   helpers:hbsHelper
 }));
 
 //View Engine Setup
-app.set('views',path.join(__dirname,'./views'));
+app.set('views',path.join(__dirname,config.views.path));
 app.set('view engine', '.hbs');
 
 //Webpack Compiler
@@ -58,6 +59,7 @@ app.use((req,res,next) => {
 
 // API dispatch
 app.use('/api/blog', blogApi);
+app.use('/api/library', libraryApi);
 
 //Se envia toso el trafico de React
 app.get('*',(req,res) =>{
@@ -67,8 +69,8 @@ app.get('*',(req,res) =>{
 });
 
 //Puerto que escucha
-app.listen(port,err => {
+app.listen(config.serverPort,err => {
   if(!err){
-    open('http://localhost:'+port);
+    open(config.baseUrl);
   }
 });
